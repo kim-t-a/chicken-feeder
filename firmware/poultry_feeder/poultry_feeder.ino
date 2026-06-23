@@ -59,10 +59,10 @@
 #include "RTClib.h"
 
 // ─── WIFI / SUPABASE ──────────────────────────────────────────────────────────
-const char* WIFI_SSID     = "me";
-const char* WIFI_PASSWORD = "kimani254";
-const char* SB_URL        = "https://agtdeofyqhifqsnvbsyt.supabase.co/rest/v1";
-const char* SB_KEY        = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFndGRlb2Z5cWhpZnFzbnZic3l0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMDI3NDcsImV4cCI6MjA5MzU3ODc0N30.Au6VKGjQe-R5dCQJZ9vQRL-LIx0t0-EV_7PjswOXFWs";
+const char* WIFI_SSID     = "your_wifi"";
+const char* WIFI_PASSWORD = "your_password";
+const char* SB_URL        = "https://your-project.supabase.co/rest/v1";
+const char* SB_KEY        = "your_supabase_ke";
 
 // ─── NTP ──────────────────────────────────────────────────────────────────────
 const char*    NTP_SERVER1         = "pool.ntp.org";
