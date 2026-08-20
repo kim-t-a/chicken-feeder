@@ -606,5 +606,5 @@ Feeding history updated
 
 ---
 <p align="center">
-  <img src="poultry.jpg" alt="PoultryPal Automated Poultry Feeder" width="700">
+  <img src="poultrypal.jpg" alt="PoultryPal Automated Feeding System" width="700">
 </p>
