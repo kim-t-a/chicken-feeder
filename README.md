@@ -6,6 +6,10 @@ PoultryPal is a full-stack automated feeding system for small and medium poultry
 
 > **Product:** PoultryPal
 > **Repository:** chicken-feeder
+<p align="center">
+  <img src="poultrypal.jpg" alt="PoultryPal Automated Feeding System" width="700">
+</p>
+
 
 ---
 
@@ -605,6 +609,3 @@ Feeding history updated
 * Supabase Realtime
 
 ---
-<p align="center">
-  <img src="poultrypal.jpg" alt="PoultryPal Automated Feeding System" width="700">
-</p>
