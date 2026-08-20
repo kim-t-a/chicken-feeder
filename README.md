@@ -20,7 +20,7 @@ bash
 git clone https://github.com/kim-t-a/chicken-feeder.git
 cd chicken-feeder
 npm install
-**Set up Supabase**
+2.**Set up Supabase**
 Create a project at supabase.com.
 Open the SQL Editor and run everything in supabase_setup.sql. This creates:
 feeder_config — current mode, schedule, calibration, live bowl weight, alert state
@@ -29,7 +29,7 @@ hopper_refills — hopper top-up history
 alert_logs — jam / empty hopper / offline history
 feed_requirements — daily feed grams per bird by breed and age (pre-seeded)
 Go to Database → Replication and enable Realtime for feeder_config, feeding_logs, and alert_logs.
-**Configure environment variables**
+3.**Configure environment variables**
 Create a .env file in the project root
 VITE_SUPABASE_URL='your-supabase-project-url'
 VITE_SUPABASE_ANON_KEY='your-supabase-anon-key'
