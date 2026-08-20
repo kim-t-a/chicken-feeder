@@ -9,7 +9,7 @@ PoultryPal is a full-stack automated feeding system for small and medium poultry
 
 ---
 
-## 🚀 How It Works
+# 🚀 How It Works
 
 PoultryPal connects a physical automated feeder to a web-based management dashboard.
 
@@ -22,11 +22,11 @@ PoultryPal connects a physical automated feeder to a web-based management dashbo
              │
              │ Realtime
              │
-      ┌──────▼──────┐
-      │   Supabase  │
-      │ PostgreSQL  │
-      │  Realtime   │
-      └──────┬──────┘
+       ┌─────▼──────┐
+       │  Supabase  │
+       │ PostgreSQL │
+       │  Realtime  │
+       └─────┬──────┘
              │
              │ Wi-Fi
              │
@@ -192,8 +192,9 @@ ESP32
   └──────► Supabase
               │
               └── Feeding logs
+```
 
-
+```text
 Internet Unavailable
 
 ESP32
@@ -201,8 +202,9 @@ ESP32
   └──────► NVS Flash
               │
               └── Store feeding logs
+```
 
-
+```text
 Internet Restored
 
 NVS Flash
@@ -211,7 +213,7 @@ NVS Flash
   ESP32
     │
     ▼
-Supabase
+  Supabase
 ```
 
 This prevents temporary network failures from causing feeding records to be lost.
@@ -239,7 +241,6 @@ The physical automated feeding system:
 * Load Cell
 * Servo Motor
 * DS3231 RTC
-* Kill Switch
 
 ### 2. Backend Layer
 
@@ -277,20 +278,18 @@ The React PWA provides:
 | Load Cell                 | Measures feed weight        |
 | Continuous-Rotation Servo | Drives dispensing mechanism |
 | DS3231 RTC                | Maintains accurate time     |
-| Kill Switch               | Emergency/manual shutdown   |
 
 ---
 
 # 🔌 Pin Mapping
 
-| Signal      | ESP32-S3 GPIO |
-| ----------- | ------------: |
-| HX711 DOUT  |        GPIO 4 |
-| HX711 SCK   |        GPIO 5 |
-| Servo       |        GPIO 6 |
-| Kill Switch |        GPIO 2 |
-| RTC SDA     |        GPIO 8 |
-| RTC SCL     |        GPIO 9 |
+| Signal     | ESP32-S3 GPIO |
+| ---------- | ------------- |
+| HX711 DOUT | GPIO 4        |
+| HX711 SCK  | GPIO 5        |
+| Servo      | GPIO 6        |
+| RTC SDA    | GPIO 8        |
+| RTC SCL    | GPIO 9        |
 
 > ⚠️ Verify the GPIO assignments against your actual hardware before connecting or powering the system.
 
@@ -337,7 +336,7 @@ npm install
 
 ## 2. Set Up Supabase
 
-Create a project at [Supabase](https://supabase.com).
+Create a project at [Supabase](https://supabase.com/).
 
 Open the **SQL Editor** and run:
 
@@ -497,6 +496,8 @@ Save feeding log
 Sync with Supabase
 ```
 
+---
+
 ## Ad-Libitum Mode
 
 ```text
@@ -529,16 +530,16 @@ Attempt recovery movement
 Check weight again
         ↓
 Recovered?
-   ┌────┴────┐
-  YES        NO
-   ↓          ↓
-Continue    Retry
-feeding       ↓
-           Repeated failure?
-              ↓
-             YES
-              ↓
-         Create alert
+    ┌────┴────┐
+   YES        NO
+    ↓          ↓
+ Continue    Retry
+ feeding       ↓
+            Repeated failure?
+                 ↓
+                YES
+                 ↓
+            Create alert
 ```
 
 ---
@@ -564,7 +565,7 @@ NVS Flash
     ↓
   ESP32
     ↓
- Supabase
+  Supabase
     ↓
 Feeding history updated
 ```
@@ -605,4 +606,70 @@ Feeding history updated
 
 ---
 
-#
+# 🔒 Security
+
+PoultryPal follows these security principles:
+
+* Keep secrets out of source control.
+* Use environment variables for configuration.
+* Never expose Supabase service-role keys in the frontend.
+* Configure Row Level Security in Supabase.
+* Validate data received from the ESP32.
+* Protect device credentials.
+
+---
+
+# 🗺️ Roadmap
+
+* Multi-feeder management
+* Multiple farm/house management
+* Advanced feed consumption analytics
+* Automatic abnormal consumption detection
+* Push notifications
+* Farmer authentication
+* Farm-level reports
+* Feed cost tracking
+* Solar-powered feeder support
+* OTA ESP32 firmware updates
+* Remote device diagnostics
+* AI-powered feeding recommendations
+
+---
+
+# 🤝 Contributing
+
+Contributions, suggestions, and improvements are welcome.
+
+Clone the repository:
+
+```bash
+git clone https://github.com/kim-t-a/chicken-feeder.git
+cd chicken-feeder
+npm install
+```
+
+Create a feature branch:
+
+```bash
+git checkout -b feature/your-feature
+```
+
+Make your changes, test them, and submit a pull request.
+
+---
+
+# 📄 License
+
+This project is licensed under the **Apache License 2.0**.
+
+---
+
+# 🐔 About PoultryPal
+
+PoultryPal was developed to make automated poultry feeding more accessible to small and medium-scale poultry farmers.
+
+By combining **embedded systems, weight sensing, cloud connectivity, automation, and a real-time web application**, PoultryPal aims to reduce feed wastage, improve feeding consistency, and simplify poultry farm management.
+
+## PoultryPal
+
+**Smarter Feeding. Better Farming.**
