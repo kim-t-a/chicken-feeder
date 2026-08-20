@@ -605,3 +605,6 @@ Feeding history updated
 * Supabase Realtime
 
 ---
+<p align="center">
+  <img src="poultry.jpg" alt="PoultryPal Automated Poultry Feeder" width="700">
+</p>
