@@ -2,57 +2,58 @@
 
 ### Smart Automated Poultry Feeding System
 
-PoultryPal is a full-stack automated poultry feeding system designed for small and medium-sized poultry farms.
+PoultryPal is a full-stack automated feeding system for small and medium poultry farms. An ESP32-S3-based feeder dispenses precise, weight-verified portions of feed on a schedule or in ad-libitum mode, while a React dashboard lets farmers monitor, configure, and manage the feeder in real time.
 
-The system combines an **ESP32-S3 automated feeder**, **load-cell weight sensing**, **Supabase**, and a **React Progressive Web App (PWA)** to automatically dispense accurate feed portions while allowing farmers to monitor and manage feeding remotely in real time.
-
-> **Repository:** `chicken-feeder`
-> **Product:** `PoultryPal`
+> **Product:** PoultryPal
+> **Repository:** chicken-feeder
 
 ---
 
-## 📸 Overview
+## 🚀 How It Works
 
 PoultryPal connects a physical automated feeder to a web-based management dashboard.
 
 ```text
-                    ┌─────────────────────────┐
-                    │       PoultryPal        │
-                    │       Web Dashboard     │
-                    │       React + PWA       │
-                    └────────────┬────────────┘
-                                 │
-                              Supabase
-                                 │
-              ┌──────────────────┴──────────────────┐
-              │                                     │
-       ┌──────▼──────┐                       ┌──────▼──────┐
-       │  PostgreSQL │                       │  Realtime   │
-       │   Database  │                       │   Updates   │
-       └──────┬──────┘                       └─────────────┘
-              │
-              │ Wi-Fi
-              │
-       ┌──────▼─────────────────┐
-       │       ESP32-S3         │
-       │   PoultryPal Feeder    │
-       ├────────────────────────┤
-       │ HX711 + Load Cell      │
-       │ Servo Motor             │
-       │ DS3231 RTC              │
-       │ NVS Offline Storage     │
-       └────────────────────────┘
+┌─────────────────────────┐
+│       PoultryPal        │
+│     React Web App       │
+│          PWA            │
+└────────────┬────────────┘
+             │
+             │ Realtime
+             │
+      ┌──────▼──────┐
+      │   Supabase  │
+      │ PostgreSQL  │
+      │  Realtime   │
+      └──────┬──────┘
+             │
+             │ Wi-Fi
+             │
+┌────────────▼────────────┐
+│        ESP32-S3         │
+│    PoultryPal Feeder    │
+├─────────────────────────┤
+│ HX711 + Load Cell       │
+│ Servo Motor             │
+│ DS3231 RTC              │
+│ NVS Offline Storage     │
+└─────────────────────────┘
 ```
+
+The ESP32-S3 weighs the feed bowl, dispenses feed according to the configured feeding mode, detects and recovers from jams, and synchronizes feeding data with Supabase.
+
+The web application reads and writes the same Supabase data in real time, allowing farmers to monitor and control the feeder remotely.
 
 ---
 
 # ✨ Features
 
-## 📊 Real-Time Dashboard
+### 📊 Real-Time Dashboard
 
 Monitor the feeder from the PoultryPal web application.
 
-* 🥣 Live feed bowl weight
+* 🥣 Live bowl weight
 * 🪣 Hopper level
 * 🟢 Device online/offline status
 * ⏰ Next scheduled feeding
@@ -60,96 +61,80 @@ Monitor the feeder from the PoultryPal web application.
 * 🚨 Active alerts
 * ⚙️ Feeder configuration
 
-The dashboard receives live updates through Supabase Realtime instead of repeatedly polling the server.
+---
+
+### 🍽️ Two Feeding Modes
+
+#### Scheduled Feeding
+
+Configure up to **8 feeding times per day** with configurable feed quantities.
+
+#### Ad-Libitum Feeding
+
+The feeder automatically dispenses feed when the bowl weight falls below a configured threshold.
 
 ---
 
-## 🍽️ Two Feeding Modes
+### ⚖️ Weight-Verified Dispensing
 
-### Scheduled Feeding
+PoultryPal uses a **load cell + HX711 amplifier** to measure the actual feed weight.
 
-Configure up to **8 feeding times per day**.
-
-Each feeding schedule can specify the target amount of feed to dispense.
-
-### Ad-Libitum Feeding
-
-The feeder automatically dispenses feed when the bowl weight drops below a configured threshold.
-
-This allows birds to access feed without requiring fixed feeding times.
+The feeder does not rely only on motor runtime. It continuously monitors the bowl weight during dispensing to help achieve more accurate portions.
 
 ---
 
-## ⚖️ Weight-Verified Dispensing
+### 🔧 Automatic Calibration
 
-PoultryPal uses a **load cell + HX711 amplifier** to measure the feed bowl.
+The load cell can be calibrated directly from the web dashboard without reflashing the ESP32.
 
-Instead of simply running the motor for a fixed amount of time, the system monitors the actual weight and adjusts dispensing accordingly.
+The guided calibration process allows the user to:
 
-This helps provide more consistent feeding quantities.
-
----
-
-## 🎯 Variable-Angle Dispensing
-
-The dispensing mechanism adjusts its opening duration according to the requested feed quantity.
-
-Small feed requests receive shorter dispensing times while larger requests receive longer dispensing times.
-
-This improves accuracy, particularly for smaller portions.
-
----
-
-## 🔧 Automatic Calibration
-
-Load-cell calibration can be performed from the PoultryPal web dashboard.
-
-The calibration workflow allows the user to:
-
-1. Prepare the empty bowl.
+1. Empty the feed bowl.
 2. Zero the scale.
 3. Place a known weight on the bowl.
 4. Enter the reference weight.
 5. Calculate the calibration factor.
 6. Save the calibration settings.
 
-No firmware re-flashing is required.
-
 ---
 
-## 🛠️ Smart Jam Recovery
+### 🛠️ Smart Jam Recovery
 
-PoultryPal monitors the dispensing mechanism for possible feed jams.
+PoultryPal detects possible dispensing jams by monitoring the expected change in feed weight.
 
-When a jam is detected, the feeder:
+When a jam occurs, the feeder:
 
 1. Detects that the expected weight change is not occurring.
-2. Stops the normal dispensing cycle.
+2. Stops normal dispensing.
 3. Attempts a gentle recovery movement.
 4. Checks whether dispensing resumes.
-5. Repeats recovery when necessary.
+5. Retries when necessary.
 6. Raises an alert after repeated failures.
-
-This helps prevent a temporary feed bridge from becoming a permanent feeding failure.
 
 ---
 
-## 🐔 Flock-Aware Feed Targets
+### 🎯 Variable-Angle Dispensing
+
+The dispensing mechanism adjusts its opening time according to the requested feed quantity.
+
+This provides better control over feed portions, especially for smaller quantities.
+
+---
+
+### 🐔 Flock-Aware Feed Targets
 
 PoultryPal includes feed requirement data based on:
 
-* Breed type
+* Breed
 * Bird age
 * Production type
 * Daily feed requirement per bird
 
-The system can use flock information to help determine appropriate daily feed targets.
-
-Initial feed requirement data is seeded for Kenyan poultry production.
+The system is seeded with feed requirement data suitable for Kenyan poultry production.
 
 ---
 
-## 🪣 Hopper Tracking
+### 🪣 Hopper Tracking
 
 PoultryPal tracks the estimated amount of feed remaining in the hopper.
 
@@ -158,12 +143,12 @@ The system:
 * Records hopper refills.
 * Deducts dispensed feed.
 * Estimates remaining capacity.
-* Detects potentially empty hoppers.
-* Generates alerts when feed levels become critically low.
+* Detects low or empty hopper conditions.
+* Generates alerts when feed levels become critical.
 
 ---
 
-## 📈 Feeding History
+### 📈 Feeding History & Charts
 
 Every feeding event can be recorded in Supabase.
 
@@ -177,55 +162,67 @@ The dashboard can display:
 * Feeding history
 * Weight trends
 
-This allows farmers to monitor feeding behavior over time.
-
 ---
 
-## 🚨 Alerts
+### 🚨 Alerts
 
-PoultryPal can generate alerts for important events such as:
+PoultryPal can generate alerts for:
 
-* ⚠️ Feed dispensing jam
-* 🪣 Empty/low hopper
-* 📡 Offline feeder
+* ⚠️ Jam detection
+* 🪣 Low or empty hopper
+* 📡 Offline device
 * ❌ Repeated dispensing failure
 * ⚙️ Device problems
 
-The application can also support push notifications for important alerts.
+Push notifications can also be supported for important alerts.
 
 ---
 
-## 📡 Offline Resilience
+### 📡 Offline Resilience
 
-The feeder is designed to continue operating even when Wi-Fi or the Supabase backend becomes temporarily unavailable.
+The feeder continues operating even when Wi-Fi or Supabase is temporarily unavailable.
 
-Feeding logs are temporarily stored in **ESP32 NVS flash**.
-
-When connectivity is restored, the feeder synchronizes the stored records with Supabase.
+Feeding logs are stored locally in **ESP32 NVS flash** and synchronized with Supabase when the connection is restored.
 
 ```text
-Normal operation
-
-ESP32 → Supabase
-   │
-   └── Feeding logs synchronized
-
-
-Internet unavailable
+Internet Available
 
 ESP32
- │
- └── NVS Flash
-       │
-       └── Store feeding logs
+  │
+  └──────► Supabase
+              │
+              └── Feeding logs
 
 
-Internet restored
+Internet Unavailable
 
-NVS Flash → ESP32 → Supabase
+ESP32
+  │
+  └──────► NVS Flash
+              │
+              └── Store feeding logs
+
+
+Internet Restored
+
+NVS Flash
+    │
+    ▼
+  ESP32
+    │
+    ▼
+Supabase
 ```
 
 This prevents temporary network failures from causing feeding records to be lost.
+
+---
+
+### 📱 Installable PWA
+
+The PoultryPal dashboard is built as a Progressive Web App.
+
+Users can install it on supported devices and use it as a standalone application.
 
 ---
 
@@ -235,14 +232,14 @@ PoultryPal consists of three main layers.
 
 ### 1. Hardware Layer
 
-The physical automated feeder.
+The physical automated feeding system:
 
 * ESP32-S3
 * HX711
-* Load cell
-* Servo motor
+* Load Cell
+* Servo Motor
 * DS3231 RTC
-* Kill switch
+* Kill Switch
 
 ### 2. Backend Layer
 
@@ -250,7 +247,7 @@ Supabase provides:
 
 * PostgreSQL database
 * Realtime synchronization
-* Device configuration storage
+* Device configuration
 * Feeding logs
 * Hopper records
 * Alert records
@@ -295,7 +292,7 @@ The React PWA provides:
 | RTC SDA     |        GPIO 8 |
 | RTC SCL     |        GPIO 9 |
 
-> Always verify the GPIO assignments against your actual hardware revision before connecting or powering the system.
+> ⚠️ Verify the GPIO assignments against your actual hardware before connecting or powering the system.
 
 ---
 
@@ -318,15 +315,11 @@ chicken-feeder/
 ├── public/
 │
 ├── supabase_setup.sql
-│
 ├── .env.example
 ├── package.json
 ├── vite.config.*
-├── README.md
-└── ...
+└── README.md
 ```
-
-The exact frontend folders may vary depending on the current implementation.
 
 ---
 
@@ -342,9 +335,9 @@ npm install
 
 ---
 
-# 🗄️ 2. Set Up Supabase
+## 2. Set Up Supabase
 
-Create a new project in Supabase.
+Create a project at [Supabase](https://supabase.com).
 
 Open the **SQL Editor** and run:
 
@@ -352,23 +345,23 @@ Open the **SQL Editor** and run:
 supabase_setup.sql
 ```
 
-The setup creates the main PoultryPal database tables.
+This creates the main PoultryPal database tables.
 
-### Main Tables
+### Database Tables
 
-| Table               | Purpose                                     |
-| ------------------- | ------------------------------------------- |
-| `feeder_config`     | Current feeder configuration and live state |
-| `feeding_logs`      | Feeding/dispensing events                   |
-| `hopper_refills`    | Hopper refill history                       |
-| `alert_logs`        | Jam, hopper and offline alerts              |
-| `feed_requirements` | Feed requirements by breed and age          |
+| Table               | Purpose                                                   |
+| ------------------- | --------------------------------------------------------- |
+| `feeder_config`     | Current mode, schedule, calibration and live feeder state |
+| `feeding_logs`      | Every feeding and dispensing event                        |
+| `hopper_refills`    | Hopper refill history                                     |
+| `alert_logs`        | Jam, hopper and offline alerts                            |
+| `feed_requirements` | Daily feed requirements by breed and age                  |
 
 ---
 
 ## 3. Enable Supabase Realtime
 
-In Supabase, open:
+In Supabase, go to:
 
 **Database → Replication**
 
@@ -378,30 +371,24 @@ Enable Realtime for:
 * `feeding_logs`
 * `alert_logs`
 
-This allows the PoultryPal dashboard to receive changes immediately.
+This allows the PoultryPal dashboard to receive changes in real time without continuous frontend polling.
 
 ---
 
-# 🔐 4. Configure Environment Variables
+## 4. Configure Environment Variables
 
-Create a `.env` file in the project root.
+Create a `.env` file in the project root:
 
 ```env
 VITE_SUPABASE_URL="your-supabase-project-url"
 VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
 ```
 
-For security, **never commit your `.env` file or private keys to GitHub.**
-
-You can provide an example configuration through:
-
-```text
-.env.example
-```
+> ⚠️ Never commit your `.env` file or Supabase service-role key to GitHub.
 
 ---
 
-# 💻 5. Run the Web Application
+## 5. Run the Web Application
 
 Start the development server:
 
@@ -409,7 +396,7 @@ Start the development server:
 npm run dev
 ```
 
-Create a production build:
+Build the production application:
 
 ```bash
 npm run build
@@ -423,7 +410,7 @@ npm run preview
 
 ---
 
-# 🔌 6. Flash the ESP32-S3 Firmware
+## 6. Flash the ESP32-S3 Firmware
 
 Open:
 
@@ -431,10 +418,7 @@ Open:
 firmware/poultry_feeder/poultry_feeder.ino
 ```
 
-You can use either:
-
-* Arduino IDE
-* PlatformIO
+The firmware can be flashed using **Arduino IDE** or **PlatformIO**.
 
 Install the required libraries:
 
@@ -445,7 +429,7 @@ ESP32Servo
 RTClib
 ```
 
-Configure the firmware with your:
+Configure the firmware with:
 
 * Wi-Fi credentials
 * Supabase URL
@@ -485,9 +469,9 @@ Monitor weight + schedule + hopper
 
 ---
 
-# 🔄 Feeding Process
+# 🍽️ Feeding Process
 
-### Scheduled Mode
+## Scheduled Mode
 
 ```text
 Check current time
@@ -513,7 +497,7 @@ Save feeding log
 Sync with Supabase
 ```
 
-### Ad-Libitum Mode
+## Ad-Libitum Mode
 
 ```text
 Monitor bowl weight
@@ -534,10 +518,6 @@ Save feeding log
 ---
 
 # 🛠️ Jam Recovery
-
-The feeder continuously checks whether the expected feed weight is changing during dispensing.
-
-If the weight does not increase as expected:
 
 ```text
 Possible jam detected
@@ -563,49 +543,61 @@ feeding       ↓
 
 ---
 
-# 📱 Progressive Web App
+# 🔄 Offline Synchronization
 
-PoultryPal is designed as a Progressive Web App.
+When the internet is unavailable:
 
-This allows users to install the dashboard on supported devices and use it like a standalone application.
+```text
+ESP32
+  ↓
+NVS Flash
+  ↓
+Store feeding events
+  ↓
+Continue operation
+```
 
-The PWA can provide:
+When connectivity returns:
 
-* Install-to-home-screen support
-* Standalone application experience
-* Responsive mobile interface
-* Real-time updates
-* Offline-friendly application behavior
+```text
+NVS Flash
+    ↓
+  ESP32
+    ↓
+ Supabase
+    ↓
+Feeding history updated
+```
 
 ---
 
 # 🌐 Technology Stack
 
-## Hardware
+### Hardware
 
 * ESP32-S3
 * HX711
 * Load Cell
-* Servo Motor
+* Continuous-Rotation Servo
 * DS3231 RTC
 
-## Firmware
+### Firmware
 
 * Arduino C++
 * ArduinoJson
-* HX711 library
+* HX711
 * ESP32Servo
 * RTClib
-* NVS Flash
+* ESP32 NVS
 
-## Frontend
+### Frontend
 
 * React
 * TypeScript
 * Vite
 * Progressive Web App
 
-## Backend
+### Backend
 
 * Supabase
 * PostgreSQL
@@ -613,70 +605,4 @@ The PWA can provide:
 
 ---
 
-# 🔒 Security
-
-The application should follow these security principles:
-
-* Keep secrets out of source control.
-* Use environment variables for frontend configuration.
-* Configure appropriate Supabase Row Level Security policies.
-* Never expose Supabase service-role keys in the frontend.
-* Protect device authentication credentials.
-* Validate data received from the ESP32.
-
----
-
-# 📊 Future Improvements
-
-Potential future improvements include:
-
-* [ ] Multi-feeder management
-* [ ] Multiple farm/house management
-* [ ] Advanced feed consumption analytics
-* [ ] Automatic abnormal consumption detection
-* [ ] Mobile notifications
-* [ ] Farmer accounts and authentication
-* [ ] Farm-level reports
-* [ ] Feed cost tracking
-* [ ] Solar-powered feeder support
-* [ ] OTA ESP32 firmware updates
-* [ ] Remote device diagnostics
-* [ ] AI-powered feeding recommendations
-
----
-
-# 🤝 Contributing
-
-Contributions, suggestions, and improvements are welcome.
-
-If you would like to contribute:
-
-```bash
-git clone https://github.com/kim-t-a/chicken-feeder.git
-cd chicken-feeder
-npm install
-```
-
-Create a branch for your changes:
-
-```bash
-git checkout -b feature/your-feature
-```
-
-Make your changes, test them, and submit a pull request.
-
----
-
-# 📄 License
-
-This project is licensed under the Apache License 2.0.
-
----
-
-# 🐔 About PoultryPal
-
-PoultryPal was developed to make automated poultry feeding more accessible to small and medium-scale poultry farmers.
-
-By combining **embedded systems, weight sensing, cloud connectivity, automation, and a real-time web application**, PoultryPal aims to reduce feed wastage, improve feeding consistency, and make poultry farm management easier.
-
-**PoultryPal — Smarter feeding. Better farming.**
+#
