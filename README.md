@@ -4,8 +4,7 @@
 
 PoultryPal is a full-stack automated feeding system for small and medium poultry farms. An ESP32-S3-based feeder dispenses precise, weight-verified portions of feed on a schedule or in ad-libitum mode, while a React dashboard lets farmers monitor, configure, and manage the feeder in real time.
 
-> **Product:** PoultryPal
-> **Repository:** chicken-feeder
+
 <p align="center">
   <img src="poultrypal.jpg" alt="PoultryPal Automated Feeding System" width="700">
 </p>
